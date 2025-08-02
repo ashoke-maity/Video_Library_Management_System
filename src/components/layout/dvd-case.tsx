@@ -3,7 +3,8 @@
 import { useRef, useState } from "react"
 import { useFrame } from "@react-three/fiber"
 import { Html } from "@react-three/drei"
-import type { Mesh, Vector3 } from "three"
+import { Vector3 } from "three"
+import type { Mesh } from "three"
 import type { Video } from "@/lib/video"
 
 interface DVDCaseProps {
@@ -43,10 +44,7 @@ export function DVDCase({
         setClicked(false)
       } else {
         const targetScale = hovered ? (enhanced ? 1.1 : 1.05) : 1
-        meshRef.current.scale.lerp(
-          { x: targetScale, y: targetScale, z: targetScale } as Parameters<typeof meshRef.current.scale.lerp>[0], 
-          0.1
-        )
+        meshRef.current.scale.lerp(new Vector3(targetScale, targetScale, targetScale), 0.1)
       }
     }
   })
