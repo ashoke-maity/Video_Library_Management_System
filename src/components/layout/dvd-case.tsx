@@ -43,7 +43,10 @@ export function DVDCase({
         setClicked(false)
       } else {
         const targetScale = hovered ? (enhanced ? 1.1 : 1.05) : 1
-        meshRef.current.scale.lerp({ x: targetScale, y: targetScale, z: targetScale } as any, 0.1)
+        meshRef.current.scale.lerp(
+          { x: targetScale, y: targetScale, z: targetScale } as Parameters<typeof meshRef.current.scale.lerp>[0], 
+          0.1
+        )
       }
     }
   })
