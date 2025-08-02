@@ -90,6 +90,8 @@ export default function Home() {
         <VideoModal
           video={selectedVideo}
           onClose={() => setSelectedVideo(null)}
+          isFavorite={favorites.includes(selectedVideo.id)}
+          onToggleFavorite={toggleFavorite}
         />
       )}
     </div>
