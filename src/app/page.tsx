@@ -91,7 +91,7 @@ export default function Home() {
           video={selectedVideo}
           onClose={() => setSelectedVideo(null)}
           isFavorite={favorites.includes(selectedVideo.id)}
-          onToggleFavorite={toggleFavorite}
+          onToggleFavorite={() => toggleFavorite(selectedVideo.id)}
         />
       )}
     </div>
