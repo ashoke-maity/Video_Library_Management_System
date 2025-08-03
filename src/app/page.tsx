@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import { Header } from "@/components/ui/header";
-import { VideoGrid } from "@/components/ui/video-grid";
-import { VideoCarousel } from "@/components/ui/video-carousel";
+import { VideoGrid } from "@/components/layout/video-grid";
+import { VideoCarousel } from "@/components/layout/video-carousel";
 import { VideoList } from "@/components/ui/video-list";
-import { CinematicShelf } from "@/components/ui/cinematic-shelf";
+import { CinematicShelf } from "@/components/layout/cinematic-shelf";
 import { GenreSelector } from "@/components/layout/genre-selector";
 import { ViewModeSelector } from "@/components/layout/view-mode-selector";
 import type { Video, Genre, ViewMode } from "@/lib/video";
