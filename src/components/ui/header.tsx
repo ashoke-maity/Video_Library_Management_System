@@ -1,6 +1,7 @@
 "use client"
 
-import { Search, Grid3X3, List, RotateCcw } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { Search, Grid3X3, List, RotateCcw, Home, User, BookOpen } from "lucide-react"
 import type { ViewMode } from "@/lib/video"
 
 interface HeaderProps {
@@ -20,6 +21,7 @@ export function Header({
   totalVideos,
   totalFavorites,
 }: HeaderProps) {
+  const router = useRouter()
   const viewModes = [
     { value: "grid" as const, icon: Grid3X3, label: "Grid" },
     { value: "carousel" as const, icon: RotateCcw, label: "Carousel" },
@@ -30,9 +32,39 @@ export function Header({
     <header className="sticky top-0 z-20 bg-black/80 backdrop-blur-md border-b border-gray-800">
       <div className="px-6 py-4">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent">
-            CINEMATIC LIBRARY
-          </h1>
+          <div className="flex items-center gap-8">
+            <h1 
+              onClick={() => router.push('/')}
+              className="text-4xl font-bold bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              CINEMATIC LIBRARY
+            </h1>
+            
+            {/* Navigation */}
+            <nav className="flex items-center gap-6">
+              <button
+                onClick={() => router.push('/')}
+                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+              >
+                <Home className="w-4 h-4" />
+                Home
+              </button>
+              <button
+                onClick={() => router.push('/dashboard')}
+                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+              >
+                <BookOpen className="w-4 h-4" />
+                Dashboard
+              </button>
+              <button
+                onClick={() => router.push('/auth/login')}
+                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+              >
+                <User className="w-4 h-4" />
+                Login
+              </button>
+            </nav>
+          </div>
 
           <div className="flex items-center gap-4">
             {/* View Mode Selector */}

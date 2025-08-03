@@ -1,5 +1,5 @@
 export type Genre = "all" | "horror" | "comedy" | "sci-fi" | "action" | "drama"
-export type ViewMode = "grid" | "carousel" | "list"
+export type ViewMode = "grid" | "list" | "carousel" | "shelf"
 
 export interface Video {
   id: string
