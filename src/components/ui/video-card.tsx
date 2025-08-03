@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Play, Heart, Star, Clock, Eye } from "lucide-react"
 import type { Video } from "@/lib/video"
 
@@ -24,6 +25,11 @@ export function VideoCard({
   variant = "default",
 }: VideoCardProps) {
   const [isHovered, setIsHovered] = useState(false)
+  const router = useRouter()
+
+  const handleCardClick = () => {
+    router.push(`/videos/${video.id}`)
+  }
 
   return (
     <div
@@ -37,7 +43,7 @@ export function VideoCard({
         <div
           className="aspect-[2/3] relative overflow-hidden"
           style={{ backgroundColor: video.coverColor }}
-          onClick={onSelect}
+          onClick={handleCardClick}
         >
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
@@ -131,11 +137,11 @@ export function VideoCard({
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black via-black/90 to-transparent p-4 transform translate-y-0 transition-transform duration-300">
             <p className="text-gray-300 text-sm line-clamp-3 mb-3">{video.description}</p>
             <button
-              onClick={onSelect}
+              onClick={handleCardClick}
               className="w-full bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-2"
             >
               <Play className="w-4 h-4" />
-              Watch Now
+              View Details
             </button>
           </div>
         )}

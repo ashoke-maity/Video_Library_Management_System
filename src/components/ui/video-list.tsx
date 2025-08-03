@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { Play, Heart, Clock, Star, Calendar } from "lucide-react"
 import type { Video } from "@/lib/video"
 
@@ -12,6 +13,12 @@ interface VideoListProps {
 }
 
 export function VideoList({ videos, favorites, recentlyWatched, onVideoSelect, onToggleFavorite }: VideoListProps) {
+  const router = useRouter()
+
+  const handleVideoClick = (video: Video) => {
+    router.push(`/videos/${video.id}`)
+  }
+
   return (
     <div className="space-y-4">
       {videos.map((video, index) => (
@@ -88,11 +95,11 @@ export function VideoList({ videos, favorites, recentlyWatched, onVideoSelect, o
                     <Heart className={`w-4 h-4 ${favorites?.includes(video.id) ? "fill-current" : ""}`} />
                   </button>
                   <button
-                    onClick={() => onVideoSelect(video)}
+                    onClick={() => handleVideoClick(video)}
                     className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors duration-200 flex items-center gap-2"
                   >
                     <Play className="w-4 h-4" />
-                    Watch
+                    View Details
                   </button>
                 </div>
               </div>

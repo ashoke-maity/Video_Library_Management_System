@@ -1,24 +1,22 @@
 "use client";
 
-import { Suspense, useState } from "react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls, Environment, Html } from "@react-three/drei";
-import { CinematicLibrary } from "@/components/layout/cinematic-library";
+import { useState } from "react";
+import { Header } from "@/components/ui/header";
+import { VideoGrid } from "@/components/ui/video-grid";
+import { VideoCarousel } from "@/components/ui/video-carousel";
+import { VideoList } from "@/components/ui/video-list";
+import { CinematicShelf } from "@/components/ui/cinematic-shelf";
 import { GenreSelector } from "@/components/layout/genre-selector";
-import { SearchBar } from "@/components/ui/search-bar";
-import { VideoModal } from "@/components/ui/video-modal";
-import type { Video, Genre } from "@/lib/video";
+import { ViewModeSelector } from "@/components/layout/view-mode-selector";
+import type { Video, Genre, ViewMode } from "@/lib/video";
 import { mockVideos } from "@/lib/mock-videos";
 
 export default function Home() {
   const [selectedGenre, setSelectedGenre] = useState<Genre>("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedVideo, setSelectedVideo] = useState<Video | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [favorites, setFavorites] = useState<string[]>([]);
   const [recentlyWatched, setRecentlyWatched] = useState<string[]>([]);
-  const [viewMode, setViewMode] = useState<"shelves" | "carousel" | "wall">(
-    "shelves"
-  );
 
   const filteredVideos = mockVideos.filter((video) => {
     const matchesGenre =
@@ -37,63 +35,92 @@ export default function Home() {
     );
   };
 
-  return (
-    <div className="w-full h-screen bg-black relative overflow-hidden">
-      {/* UI Overlay */}
-      <div className="absolute top-0 left-0 right-0 z-10 p-6">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-4xl font-bold text-white tracking-wider">
-            CINEMATIC LIBRARY
-          </h1>
-          <SearchBar onSearch={setSearchQuery} />
-        </div>
-        <GenreSelector
-          selectedGenre={selectedGenre}
-          onGenreChange={setSelectedGenre}
-        />
-      </div>
+  const handleVideoSelect = (video: Video) => {
+    setRecentlyWatched((prev) => [video.id, ...prev.filter((id) => id !== video.id)].slice(0, 5));
+  };
 
-      {/* 3D Scene */}
-      <Canvas
-        camera={{ position: [0, 5, 15], fov: 60 }}
-        shadows
-        gl={{ antialias: true, alpha: false }}
-      >
-        <Suspense
-          fallback={
-            <Html center>
-              <div className="text-white text-xl">Loading Cinema...</div>
-            </Html>
-          }
-        >
-          <CinematicLibrary
-            videos={filteredVideos}
+  return (
+    <div className="w-full min-h-screen bg-black relative overflow-hidden">
+      {/* Header */}
+      <Header
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        totalVideos={filteredVideos.length}
+        totalFavorites={favorites.length}
+      />
+
+      {/* Main Content */}
+      <div className="relative z-10 p-6">
+        <div className="flex justify-between items-center mb-6">
+          <GenreSelector
             selectedGenre={selectedGenre}
-            onVideoSelect={setSelectedVideo}
-            recentlyWatched={recentlyWatched}
+            onGenreChange={setSelectedGenre}
+          />
+          <ViewModeSelector
             viewMode={viewMode}
+            onViewModeChange={setViewMode}
+          />
+        </div>
+
+        {/* Featured Videos Carousel */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-white mb-4">Featured Videos</h2>
+          <VideoCarousel
+            videos={filteredVideos.slice(0, 6)}
             favorites={favorites}
+            recentlyWatched={recentlyWatched}
+            onVideoSelect={handleVideoSelect}
             onToggleFavorite={toggleFavorite}
           />
-          <OrbitControls
-            enablePan={false}
-            maxPolarAngle={Math.PI / 2}
-            minDistance={10}
-            maxDistance={25}
-          />
-          <Environment preset="night" />
-        </Suspense>
-      </Canvas>
+        </div>
 
-      {/* Video Modal */}
-      {selectedVideo && (
-        <VideoModal
-          video={selectedVideo}
-          onClose={() => setSelectedVideo(null)}
-          isFavorite={favorites.includes(selectedVideo.id)}
-          onToggleFavorite={() => toggleFavorite(selectedVideo.id)}
-        />
-      )}
+        {/* Main Video Display */}
+        <div>
+          <h2 className="text-2xl font-bold text-white mb-4">
+            {selectedGenre === "all" ? "All Videos" : `${selectedGenre.charAt(0).toUpperCase() + selectedGenre.slice(1)} Collection`}
+          </h2>
+          
+          {viewMode === "grid" && (
+            <VideoGrid
+              videos={filteredVideos}
+              favorites={favorites}
+              recentlyWatched={recentlyWatched}
+              onVideoSelect={handleVideoSelect}
+              onToggleFavorite={toggleFavorite}
+            />
+          )}
+          {viewMode === "list" && (
+            <VideoList
+              videos={filteredVideos}
+              favorites={favorites}
+              recentlyWatched={recentlyWatched}
+              onVideoSelect={handleVideoSelect}
+              onToggleFavorite={toggleFavorite}
+            />
+          )}
+          {viewMode === "carousel" && (
+            <VideoCarousel
+              videos={filteredVideos}
+              favorites={favorites}
+              recentlyWatched={recentlyWatched}
+              onVideoSelect={handleVideoSelect}
+              onToggleFavorite={toggleFavorite}
+            />
+          )}
+          {viewMode === "shelf" && (
+            <CinematicShelf
+              videos={filteredVideos}
+              favorites={favorites}
+              recentlyWatched={recentlyWatched}
+              onVideoSelect={handleVideoSelect}
+              onToggleFavorite={toggleFavorite}
+              selectedGenre={selectedGenre}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 }

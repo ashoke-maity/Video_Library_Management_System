@@ -1,17 +1,18 @@
 "use client"
 
-import { Grid3X3, RotateCcw, Layers } from "lucide-react"
+import { Grid3X3, RotateCcw, Layers, List } from "lucide-react"
 
 interface ViewModeSelectorProps {
-  viewMode: "shelves" | "carousel" | "wall"
-  onViewModeChange: (mode: "shelves" | "carousel" | "wall") => void
+  viewMode: "grid" | "list" | "carousel" | "shelf"
+  onViewModeChange: (mode: "grid" | "list" | "carousel" | "shelf") => void
 }
 
 export function ViewModeSelector({ viewMode, onViewModeChange }: ViewModeSelectorProps) {
   const modes = [
-    { value: "shelves" as const, icon: Layers, label: "Shelves" },
+    { value: "grid" as const, icon: Grid3X3, label: "Grid" },
+    { value: "list" as const, icon: List, label: "List" },
     { value: "carousel" as const, icon: RotateCcw, label: "Carousel" },
-    { value: "wall" as const, icon: Grid3X3, label: "Wall" },
+    { value: "shelf" as const, icon: Layers, label: "Shelf" },
   ]
 
   return (
