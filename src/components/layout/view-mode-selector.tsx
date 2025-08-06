@@ -1,6 +1,6 @@
 "use client"
 
-import { Grid3X3, RotateCcw, Layers, List } from "lucide-react"
+import { Grid3X3, RotateCcw, Layers, List, Layout, View } from "lucide-react"
 
 interface ViewModeSelectorProps {
   viewMode: "grid" | "list" | "carousel" | "shelf"
@@ -9,14 +9,38 @@ interface ViewModeSelectorProps {
 
 export function ViewModeSelector({ viewMode, onViewModeChange }: ViewModeSelectorProps) {
   const modes = [
-    { value: "grid" as const, icon: Grid3X3, label: "Grid" },
-    { value: "list" as const, icon: List, label: "List" },
-    { value: "carousel" as const, icon: RotateCcw, label: "Carousel" },
-    { value: "shelf" as const, icon: Layers, label: "Shelf" },
+    { 
+      value: "grid" as const, 
+      icon: Grid3X3, 
+      label: "Grid", 
+      description: "Card layout view",
+      gradient: "from-indigo-500 to-purple-600"
+    },
+    { 
+      value: "list" as const, 
+      icon: List, 
+      label: "List", 
+      description: "Compact list view",
+      gradient: "from-blue-500 to-indigo-600"
+    },
+    { 
+      value: "carousel" as const, 
+      icon: RotateCcw, 
+      label: "Carousel", 
+      description: "Horizontal scrolling",
+      gradient: "from-green-500 to-emerald-600"
+    },
+    { 
+      value: "shelf" as const, 
+      icon: Layers, 
+      label: "Shelf", 
+      description: "Cinematic shelf view",
+      gradient: "from-pink-500 to-rose-600"
+    },
   ]
 
   return (
-    <div className="flex bg-black/50 rounded-lg p-1 border border-gray-600">
+    <div className="flex bg-background-elevated/50 backdrop-blur-sm rounded-xl p-1 border border-white/10">
       {modes.map((mode) => {
         const Icon = mode.icon
         return (
@@ -24,16 +48,29 @@ export function ViewModeSelector({ viewMode, onViewModeChange }: ViewModeSelecto
             key={mode.value}
             onClick={() => onViewModeChange(mode.value)}
             className={`
-              flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200
+              group relative flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all duration-300 transform hover:scale-105
               ${
                 viewMode === mode.value
-                  ? "bg-red-600 text-white shadow-lg"
-                  : "text-gray-300 hover:text-white hover:bg-gray-700"
+                  ? `bg-gradient-to-r ${mode.gradient} text-white shadow-lg scale-105`
+                  : "text-foreground-secondary hover:text-foreground-primary hover:bg-white/5"
               }
             `}
           >
-            <Icon className="w-4 h-4" />
-            {mode.label}
+            {/* Background glow for selected */}
+            {viewMode === mode.value && (
+              <div className={`absolute -inset-1 bg-gradient-to-r ${mode.gradient} rounded-lg blur-xl opacity-50`}></div>
+            )}
+            
+            <div className="relative flex items-center gap-2">
+              <Icon className="w-4 h-4" />
+              <span className="hidden sm:inline">{mode.label}</span>
+            </div>
+            
+            {/* Tooltip */}
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-background-elevated/95 backdrop-blur-xl border border-white/10 rounded-lg text-xs text-foreground-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none whitespace-nowrap z-50">
+              {mode.description}
+              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-background-elevated/95"></div>
+            </div>
           </button>
         )
       })}
