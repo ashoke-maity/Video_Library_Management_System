@@ -3,12 +3,12 @@
 import { useRouter } from "next/navigation";
 import {
   Search,
-  Grid3X3,
-  List,
-  RotateCcw,
-  Home,
   User,
   BookOpen,
+  Sparkles,
+  Bell,
+  Settings,
+  LogOut,
 } from "lucide-react";
 import type { ViewMode } from "@/lib/video";
 import { useEffect, useState } from "react";
@@ -31,15 +31,23 @@ export function Header({
   totalFavorites,
 }: HeaderProps) {
   const router = useRouter();
-  const viewModes = [
-    { value: "grid" as const, icon: Grid3X3, label: "Grid" },
-    { value: "carousel" as const, icon: RotateCcw, label: "Carousel" },
-    { value: "list" as const, icon: List, label: "List" },
-  ];
 
-  const [user, setUser] = useState<{ name?: string; email?: string } | null>(
-    null
-  );
+  const [user, setUser] = useState<{ name?: string; email?: string } | null>(null);
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    if (!isDropdownOpen) return;
+    function handleClick(e: MouseEvent) {
+      const dropdown = document.getElementById("header-avatar-dropdown");
+      if (dropdown && !dropdown.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [isDropdownOpen]);
 
   useEffect(() => {
     // Try to get user from localStorage (or replace with context if available)
@@ -50,70 +58,74 @@ export function Header({
   }, []);
 
   return (
-    <header className="sticky top-0 z-20 bg-black/80 backdrop-blur-md border-b border-gray-800">
+    <header className="sticky top-0 z-50 glass-effect border-b border-white/10">
       <div className="px-6 py-4">
-        <div className="flex justify-between items-center mb-4">
-          <div className="flex items-center gap-8">
-            <h1
-              onClick={() => router.push("/")}
-              className="text-4xl font-bold bg-gradient-to-r from-red-500 via-purple-500 to-blue-500 bg-clip-text text-transparent cursor-pointer hover:opacity-80 transition-opacity"
-            >
-              CINEMATIC LIBRARY
-            </h1>
-
-            {/* Navigation */}
-            <nav className="flex items-center gap-6">
-              <button
-                onClick={() => router.push("/")}
-                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
-              >
-                <Home className="w-4 h-4" />
-                Home
-              </button>
-            </nav>
+        {/* Main Header Row */}
+        <div className="flex justify-between items-center">
+          {/* Logo */}
+          <div 
+            onClick={() => router.push("/")}
+            className="group cursor-pointer"
+          >
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <div className="absolute -inset-1 bg-gradient-to-br from-indigo-500/20 via-purple-500/20 to-pink-500/20 rounded-xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold gradient-text">
+                  ClipShelf
+                </h1>
+                <p className="text-xs text-foreground-tertiary font-medium">
+                  Your Digital Cinema
+                </p>
+              </div>
+            </div>
           </div>
 
+          {/* Enhanced Search Bar - Now Bigger and More Prominent */}
+          <div className="flex-1 max-w-2xl mx-8">
+            <div className="relative group">
+              <div className={`relative transition-all duration-300 ${
+                isSearchFocused ? 'scale-105' : 'scale-100'
+              }`}>
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => onSearchChange(e.target.value)}
+                  onFocus={() => setIsSearchFocused(true)}
+                  onBlur={() => setIsSearchFocused(false)}
+                  placeholder="Search your cinematic library for movies, genres, actors..."
+                  className="w-full bg-background-elevated/50 border border-white/10 rounded-2xl px-6 py-4 pl-14 text-foreground-primary placeholder-foreground-muted focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-300 backdrop-blur-sm text-lg"
+                />
+                <Search className="absolute left-5 top-1/2 transform -translate-y-1/2 text-foreground-muted w-5 h-5" />
+                {isSearchFocused && (
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 to-purple-500/10 rounded-2xl blur-xl"></div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* User Controls */}
           <div className="flex items-center gap-4">
-            {/* View Mode Selector */}
-            <div className="flex bg-gray-900/50 rounded-lg p-1 border border-gray-700">
-              {viewModes.map((mode) => {
-                const Icon = mode.icon;
-                return (
-                  <button
-                    key={mode.value}
-                    onClick={() => onViewModeChange(mode.value)}
-                    className={`
-                      flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200
-                      ${
-                        viewMode === mode.value
-                          ? "bg-red-600 text-white shadow-lg"
-                          : "text-gray-300 hover:text-white hover:bg-gray-700"
-                      }
-                    `}
-                  >
-                    <Icon className="w-4 h-4" />
-                    {mode.label}
-                  </button>
-                );
-              })}
-            </div>
+            {/* Notifications */}
+            <button className="relative p-3 rounded-xl bg-background-elevated/50 border border-white/10 text-foreground-secondary hover:text-foreground-primary hover:bg-white/5 transition-all duration-200">
+              <Bell className="w-5 h-5" />
+              <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+            </button>
 
-            {/* Search Bar */}
-            <div className="relative">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => onSearchChange(e.target.value)}
-                placeholder="Search your library..."
-                className="bg-gray-900/50 border border-gray-700 rounded-full px-4 py-2 pl-10 text-white placeholder-gray-400 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 w-80 transition-all duration-200"
-              />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            </div>
-
-            {/* User Avatar/Profile */}
+            {/* User Profile */}
             {user ? (
-              <div className="relative group">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg cursor-pointer">
+              <div className="relative">
+                <div
+                  className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center text-white font-bold text-lg cursor-pointer shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  onClick={() => setIsDropdownOpen((open) => !open)}
+                  tabIndex={0}
+                  aria-haspopup="true"
+                  aria-expanded={isDropdownOpen}
+                >
                   {user.name
                     ? user.name
                         .split(" ")
@@ -122,48 +134,66 @@ export function Header({
                         .toUpperCase()
                     : user.email?.[0].toUpperCase()}
                 </div>
-                {/* Dropdown with Profile and Dashboard link, no email shown */}
-                <div className="absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-700 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 p-4 text-white text-sm flex flex-col gap-2">
-                  <button
-                    onClick={() => router.push("/users/profile")}
-                    className="flex items-center gap-2 w-full text-left px-2 py-1 rounded hover:bg-gray-800"
+                {/* Dropdown: open on click only */}
+                {isDropdownOpen && (
+                  <div
+                    id="header-avatar-dropdown"
+                    className="absolute right-0 mt-3 w-64 bg-background-elevated/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden animate-fade-in"
                   >
-                    <User className="w-4 h-4 text-blue-400" />
-                    Profile
-                  </button>
-                  <button
-                    onClick={() => router.push("/dashboard")}
-                    className="flex items-center gap-2 w-full text-left px-2 py-1 rounded hover:bg-gray-800"
-                  >
-                    <BookOpen className="w-4 h-4 text-green-400" />
-                    Dashboard
-                  </button>
-                  <button className="w-full text-left text-red-400 hover:underline mt-2">
-                    Logout
-                  </button>
-                </div>
+                    <div className="p-4 border-b border-white/10">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center text-white font-bold">
+                          {user.name
+                            ? user.name
+                                .split(" ")
+                                .map((n) => n[0])
+                                .join("")
+                                .toUpperCase()
+                            : user.email?.[0].toUpperCase()}
+                        </div>
+                        <div>
+                          <p className="font-semibold text-foreground-primary">{user.name || "User"}</p>
+                          <p className="text-sm text-foreground-tertiary">{user.email}</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-2">
+                      <button
+                        onClick={() => { setIsDropdownOpen(false); router.push("/users/profile"); }}
+                        className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-left text-foreground-secondary hover:text-foreground-primary hover:bg-white/5 transition-all duration-200"
+                      >
+                        <User className="w-4 h-4" />
+                        <span>Profile</span>
+                      </button>
+                      <button
+                        onClick={() => { setIsDropdownOpen(false); router.push("/dashboard"); }}
+                        className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-left text-foreground-secondary hover:text-foreground-primary hover:bg-white/5 transition-all duration-200"
+                      >
+                        <BookOpen className="w-4 h-4" />
+                        <span>Dashboard</span>
+                      </button>
+                      <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-left text-foreground-secondary hover:text-foreground-primary hover:bg-white/5 transition-all duration-200">
+                        <Settings className="w-4 h-4" />
+                        <span>Settings</span>
+                      </button>
+                      <div className="border-t border-white/10 my-2"></div>
+                      <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-left text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-200">
+                        <LogOut className="w-4 h-4" />
+                        <span>Logout</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <button
                 onClick={() => router.push("/users/login")}
-                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl font-medium hover:shadow-lg transition-all duration-200 hover:scale-105"
               >
-                <User className="w-4 h-4" />
-                Login
+                <User className="w-5 h-5" />
+                <span className="hidden sm:inline">Login</span>
               </button>
             )}
-          </div>
-        </div>
-
-        <div className="flex justify-between items-center text-sm text-gray-400">
-          <div>
-            {totalVideos} movies • {totalFavorites} favorites
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              Online
-            </span>
           </div>
         </div>
       </div>

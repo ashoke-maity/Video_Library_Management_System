@@ -59,7 +59,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-gradient-to-br from-[#18122B] via-[#393053] to-[#443C68]">
       <Header
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
@@ -69,56 +69,67 @@ export default function Dashboard() {
         totalFavorites={favorites.length}
       />
 
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="max-w-6xl mx-auto px-4 py-10">
+        {/* Greeting */}
+        <div className="mb-8">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-white mb-2 drop-shadow-lg">
+            Welcome{user?.name ? `, ${user.name.split(' ')[0]}` : ''}!
+          </h1>
+          <p className="text-lg text-gray-300">Your personal video dashboard</p>
+        </div>
+
         {/* User Profile Card */}
-        <div className="flex items-center gap-6 bg-gray-900/70 border border-gray-800 rounded-2xl p-6 mb-10 shadow-lg">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center text-white text-3xl font-bold">
-            {user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : user?.email?.[0].toUpperCase() || <UserIcon className="w-10 h-10" />}
+        <div className="flex items-center gap-6 bg-white/10 backdrop-blur-md border border-violet-400/30 rounded-2xl p-8 mb-12 shadow-2xl">
+          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center text-white text-4xl font-extrabold ring-4 ring-violet-400/40">
+            {user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : user?.email?.[0].toUpperCase() || <UserIcon className="w-12 h-12" />}
           </div>
           <div>
-            <div className="text-2xl font-bold text-white">{user?.name || 'User Name'}</div>
-            <div className="text-gray-400">{user?.email || 'user@email.com'}</div>
+            <div className="text-2xl md:text-3xl font-bold text-white mb-1">{user?.name || 'User Name'}</div>
+            <div className="text-gray-300 text-lg">{user?.email || 'user@email.com'}</div>
           </div>
         </div>
 
         {/* Dashboard Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
-          <div className="bg-gray-900/70 rounded-xl p-6 border border-gray-800 flex flex-col items-center">
-            <BookOpen className="w-8 h-8 text-green-400 mb-2" />
-            <div className="text-2xl font-bold text-white">{borrowedVideos.length}</div>
-            <div className="text-gray-400 text-sm">Borrowed</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-14">
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-green-400/30 flex flex-col items-center shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-300">
+            <BookOpen className="w-10 h-10 text-green-400 mb-3" />
+            <div className="text-3xl font-extrabold text-white">{borrowedVideos.length}</div>
+            <div className="text-gray-300 text-base">Borrowed</div>
           </div>
-          <div className="bg-gray-900/70 rounded-xl p-6 border border-gray-800 flex flex-col items-center">
-            <Heart className="w-8 h-8 text-red-400 mb-2" />
-            <div className="text-2xl font-bold text-white">{favorites.length}</div>
-            <div className="text-gray-400 text-sm">Favorites</div>
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-red-400/30 flex flex-col items-center shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-300">
+            <Heart className="w-10 h-10 text-red-400 mb-3" />
+            <div className="text-3xl font-extrabold text-white">{favorites.length}</div>
+            <div className="text-gray-300 text-base">Favorites</div>
           </div>
-          <div className="bg-gray-900/70 rounded-xl p-6 border border-gray-800 flex flex-col items-center">
-            <Clock className="w-8 h-8 text-blue-400 mb-2" />
-            <div className="text-2xl font-bold text-white">{watchlist.length}</div>
-            <div className="text-gray-400 text-sm">Watchlist</div>
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-blue-400/30 flex flex-col items-center shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-300">
+            <Clock className="w-10 h-10 text-blue-400 mb-3" />
+            <div className="text-3xl font-extrabold text-white">{watchlist.length}</div>
+            <div className="text-gray-300 text-base">Watchlist</div>
           </div>
-          <div className="bg-gray-900/70 rounded-xl p-6 border border-gray-800 flex flex-col items-center">
-            <Play className="w-8 h-8 text-purple-400 mb-2" />
-            <div className="text-2xl font-bold text-white">{recentlyWatched.length}</div>
-            <div className="text-gray-400 text-sm">Recently Watched</div>
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-purple-400/30 flex flex-col items-center shadow-lg hover:scale-105 hover:shadow-2xl transition-all duration-300">
+            <Play className="w-10 h-10 text-purple-400 mb-3" />
+            <div className="text-3xl font-extrabold text-white">{recentlyWatched.length}</div>
+            <div className="text-gray-300 text-base">Recently Watched</div>
           </div>
         </div>
 
+        {/* Section Divider */}
+        <hr className="border-t border-violet-400/20 mb-12" />
+
         {/* Video Sections */}
-        <div className="space-y-12">
+        <div className="space-y-16">
           {/* Currently Borrowed */}
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <BookOpen className="w-6 h-6 text-green-400" />
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <BookOpen className="w-7 h-7 text-green-400" />
                 Currently Borrowed
               </h2>
               <Badge variant="secondary" className="bg-green-900/20 text-green-400 border-green-500/30">
                 {borrowedVideos.length} videos
               </Badge>
             </div>
-            <div className="bg-gray-900/60 rounded-xl p-6 border border-gray-800">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-green-400/20">
               {getBorrowedVideos().length > 0 ? (
                 <VideoGrid
                   videos={getBorrowedVideos()}
@@ -128,11 +139,11 @@ export default function Dashboard() {
                   onToggleFavorite={toggleFavorite}
                 />
               ) : (
-                <div className="text-center py-8">
-                  <BookOpen className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                  <p className="text-gray-400">No borrowed videos yet</p>
+                <div className="text-center py-10">
+                  <BookOpen className="w-14 h-14 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400 text-lg">No borrowed videos yet</p>
                   <Button 
-                    onClick={() => router.push('/')} className="mt-4 bg-red-600 hover:bg-red-700">
+                    onClick={() => router.push('/')} className="mt-6 bg-red-600 hover:bg-red-700">
                     Browse Library
                   </Button>
                 </div>
@@ -143,15 +154,15 @@ export default function Dashboard() {
           {/* Favorites */}
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <Heart className="w-6 h-6 text-red-400" />
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <Heart className="w-7 h-7 text-red-400" />
                 Your Favorites
               </h2>
               <Badge variant="secondary" className="bg-red-900/20 text-red-400 border-red-500/30">
                 {favorites.length} videos
               </Badge>
             </div>
-            <div className="bg-gray-900/60 rounded-xl p-6 border border-gray-800">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-red-400/20">
               {getFavoriteVideos().length > 0 ? (
                 <VideoGrid
                   videos={getFavoriteVideos()}
@@ -161,11 +172,11 @@ export default function Dashboard() {
                   onToggleFavorite={toggleFavorite}
                 />
               ) : (
-                <div className="text-center py-8">
-                  <Heart className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                  <p className="text-gray-400">No favorite videos yet</p>
+                <div className="text-center py-10">
+                  <Heart className="w-14 h-14 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400 text-lg">No favorite videos yet</p>
                   <Button 
-                    onClick={() => router.push('/')} className="mt-4 bg-red-600 hover:bg-red-700">
+                    onClick={() => router.push('/')} className="mt-6 bg-red-600 hover:bg-red-700">
                     Browse Library
                   </Button>
                 </div>
@@ -176,15 +187,15 @@ export default function Dashboard() {
           {/* Watchlist */}
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <Clock className="w-6 h-6 text-blue-400" />
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <Clock className="w-7 h-7 text-blue-400" />
                 Your Watchlist
               </h2>
               <Badge variant="secondary" className="bg-blue-900/20 text-blue-400 border-blue-500/30">
                 {watchlist.length} videos
               </Badge>
             </div>
-            <div className="bg-gray-900/60 rounded-xl p-6 border border-gray-800">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-blue-400/20">
               {getWatchlistVideos().length > 0 ? (
                 <VideoGrid
                   videos={getWatchlistVideos()}
@@ -194,11 +205,11 @@ export default function Dashboard() {
                   onToggleFavorite={toggleFavorite}
                 />
               ) : (
-                <div className="text-center py-8">
-                  <Clock className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                  <p className="text-gray-400">Your watchlist is empty</p>
+                <div className="text-center py-10">
+                  <Clock className="w-14 h-14 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400 text-lg">Your watchlist is empty</p>
                   <Button 
-                    onClick={() => router.push('/')} className="mt-4 bg-red-600 hover:bg-red-700">
+                    onClick={() => router.push('/')} className="mt-6 bg-red-600 hover:bg-red-700">
                     Browse Library
                   </Button>
                 </div>
@@ -209,15 +220,15 @@ export default function Dashboard() {
           {/* Recently Watched */}
           <section>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                <Play className="w-6 h-6 text-purple-400" />
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <Play className="w-7 h-7 text-purple-400" />
                 Recently Watched
               </h2>
               <Badge variant="secondary" className="bg-purple-900/20 text-purple-400 border-purple-500/30">
                 {recentlyWatched.length} videos
               </Badge>
             </div>
-            <div className="bg-gray-900/60 rounded-xl p-6 border border-gray-800">
+            <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-purple-400/20">
               {getRecentlyWatchedVideos().length > 0 ? (
                 <VideoGrid
                   videos={getRecentlyWatchedVideos()}
@@ -227,11 +238,11 @@ export default function Dashboard() {
                   onToggleFavorite={toggleFavorite}
                 />
               ) : (
-                <div className="text-center py-8">
-                  <Play className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                  <p className="text-gray-400">No recently watched videos</p>
+                <div className="text-center py-10">
+                  <Play className="w-14 h-14 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400 text-lg">No recently watched videos</p>
                   <Button 
-                    onClick={() => router.push('/')} className="mt-4 bg-red-600 hover:bg-red-700">
+                    onClick={() => router.push('/')} className="mt-6 bg-red-600 hover:bg-red-700">
                     Browse Library
                   </Button>
                 </div>
