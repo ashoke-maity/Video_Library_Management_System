@@ -54,32 +54,38 @@ export default function UserProfilePage() {
   return (
     <div className="min-h-screen bg-black flex flex-col items-center px-4 py-12">
       <div className="bg-gray-900/80 border border-gray-800 rounded-2xl shadow-xl p-8 w-full max-w-xl flex flex-col items-center mb-10">
-        {/* Avatar */}
-        <div className="relative mb-4">
-          <div className="w-24 h-24 rounded-full bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center text-white text-4xl font-bold overflow-hidden">
-            {avatarPreview ? (
-              <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
-            ) : (
-              user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : user.email[0]?.toUpperCase() || <User className="w-10 h-10" />
-            )}
+        {/* Avatar and Profile Info Card */}
+        <div className="w-full flex flex-col items-center gap-4 mb-8 p-6 bg-gray-800/80 rounded-xl border border-gray-700 shadow">
+          <div className="relative">
+            <div className="w-28 h-28 rounded-full bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center text-white text-5xl font-bold overflow-hidden border-4 border-gray-900">
+              {avatarPreview ? (
+                <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : user.email[0]?.toUpperCase() || <User className="w-10 h-10" />
+              )}
+            </div>
+            <button
+              className="absolute bottom-2 right-2 bg-gray-800 p-2 rounded-full border border-gray-700 hover:bg-gray-700 shadow"
+              onClick={() => fileInputRef.current?.click()}
+              title="Change profile picture"
+            >
+              <Camera className="w-5 h-5 text-white" />
+            </button>
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              className="hidden"
+              onChange={handleAvatarChange}
+            />
           </div>
-          <button
-            className="absolute bottom-0 right-0 bg-gray-800 p-2 rounded-full border border-gray-700 hover:bg-gray-700"
-            onClick={() => fileInputRef.current?.click()}
-            title="Change profile picture"
-          >
-            <Camera className="w-5 h-5 text-white" />
-          </button>
-          <input
-            type="file"
-            accept="image/*"
-            ref={fileInputRef}
-            className="hidden"
-            onChange={handleAvatarChange}
-          />
+          <div className="flex flex-col items-center gap-1 mt-2">
+            <div className="text-2xl font-bold text-white">{user.name}</div>
+            <div className="text-gray-400 text-base font-mono bg-gray-900/60 px-3 py-1 rounded-full border border-gray-700 mt-1">{user.email}</div>
+          </div>
         </div>
 
-        {/* Profile Info */}
+        {/* Profile Edit Section */}
         <div className="w-full mb-8">
           {editing ? (
             <div className="space-y-4">
@@ -111,9 +117,7 @@ export default function UserProfilePage() {
               </div>
             </div>
           ) : (
-            <div className="space-y-2">
-              <div className="text-2xl font-bold text-white">{user.name}</div>
-              <div className="text-gray-400">{user.email}</div>
+            <div className="space-y-2 flex flex-col items-center">
               <button
                 className="mt-2 bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded font-semibold"
                 onClick={() => setEditing(true)}
