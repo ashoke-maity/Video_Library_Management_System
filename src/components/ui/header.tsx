@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation"
 import { Search, Grid3X3, List, RotateCcw, Home, User, BookOpen } from "lucide-react"
 import type { ViewMode } from "@/lib/video"
+import { useEffect, useState } from "react"
 
 interface HeaderProps {
   searchQuery: string
@@ -28,6 +29,16 @@ export function Header({
     { value: "list" as const, icon: List, label: "List" },
   ]
 
+  const [user, setUser] = useState<{ name?: string; email?: string } | null>(null)
+
+  useEffect(() => {
+    // Try to get user from localStorage (or replace with context if available)
+    const userData = localStorage.getItem("user")
+    if (userData) {
+      setUser(JSON.parse(userData))
+    }
+  }, [])
+
   return (
     <header className="sticky top-0 z-20 bg-black/80 backdrop-blur-md border-b border-gray-800">
       <div className="px-6 py-4">
@@ -48,20 +59,6 @@ export function Header({
               >
                 <Home className="w-4 h-4" />
                 Home
-              </button>
-              <button
-                onClick={() => router.push('/dashboard')}
-                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
-              >
-                <BookOpen className="w-4 h-4" />
-                Dashboard
-              </button>
-              <button
-                onClick={() => router.push('/auth/login')}
-                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
-              >
-                <User className="w-4 h-4" />
-                Login
               </button>
             </nav>
           </div>
@@ -102,6 +99,36 @@ export function Header({
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
             </div>
+
+            {/* User Avatar/Profile */}
+            {user ? (
+              <div className="relative group">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-500 rounded-full flex items-center justify-center text-white font-bold text-lg cursor-pointer">
+                  {user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : user.email?.[0].toUpperCase()}
+                </div>
+                {/* Dropdown with Dashboard link */}
+                <div className="absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-700 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50 p-4 text-white text-sm">
+                  <button
+                    onClick={() => router.push('/dashboard')}
+                    className="flex items-center gap-2 w-full text-left mb-2 px-2 py-1 rounded hover:bg-gray-800"
+                  >
+                    <BookOpen className="w-4 h-4 text-green-400" />
+                    Dashboard
+                  </button>
+                  <div className="font-semibold mb-1 mt-2">{user.name || user.email}</div>
+                  <div className="text-gray-400 mb-2">{user.email}</div>
+                  <button className="w-full text-left text-red-400 hover:underline">Logout</button>
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={() => router.push('/users/login')}
+                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors"
+              >
+                <User className="w-4 h-4" />
+                Login
+              </button>
+            )}
           </div>
         </div>
 

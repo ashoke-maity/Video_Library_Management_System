@@ -9,7 +9,7 @@ import { Header } from "@/components/ui/header"
 import { LoadingScreen } from "@/components/shared/loading-screen"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { BookOpen, Clock, Heart, Play, Download, Calendar } from "lucide-react"
+import { BookOpen, Clock, Heart, Play, Download, Calendar, User as UserIcon } from "lucide-react"
 import type { Video } from "@/lib/video"
 import { mockVideos } from "@/lib/mock-videos"
 
@@ -21,6 +21,13 @@ export default function Dashboard() {
   const [watchlist, setWatchlist] = useState<string[]>(["6", "8", "10"])
   const [recentlyWatched, setRecentlyWatched] = useState<string[]>(["1", "3", "7", "9"])
   const [isLoading, setIsLoading] = useState(true)
+
+  // Get user info from localStorage
+  const [user, setUser] = useState<{ name?: string; email?: string } | null>(null)
+  useEffect(() => {
+    const userData = localStorage.getItem("user")
+    if (userData) setUser(JSON.parse(userData))
+  }, [])
 
   useEffect(() => {
     const timer = setTimeout(() => setIsLoading(false), 1000)
@@ -62,188 +69,175 @@ export default function Dashboard() {
         totalFavorites={favorites.length}
       />
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-5xl mx-auto px-4 py-8">
+        {/* User Profile Card */}
+        <div className="flex items-center gap-6 bg-gray-900/70 border border-gray-800 rounded-2xl p-6 mb-10 shadow-lg">
+          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center text-white text-3xl font-bold">
+            {user?.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : user?.email?.[0].toUpperCase() || <UserIcon className="w-10 h-10" />}
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-white">{user?.name || 'User Name'}</div>
+            <div className="text-gray-400">{user?.email || 'user@email.com'}</div>
+          </div>
+        </div>
+
         {/* Dashboard Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800">
-            <div className="flex items-center gap-3">
-              <BookOpen className="w-8 h-8 text-green-400" />
-              <div>
-                <div className="text-2xl font-bold text-white">{borrowedVideos.length}</div>
-                <div className="text-gray-400 text-sm">Currently Borrowed</div>
-              </div>
-            </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
+          <div className="bg-gray-900/70 rounded-xl p-6 border border-gray-800 flex flex-col items-center">
+            <BookOpen className="w-8 h-8 text-green-400 mb-2" />
+            <div className="text-2xl font-bold text-white">{borrowedVideos.length}</div>
+            <div className="text-gray-400 text-sm">Borrowed</div>
           </div>
-          
-          <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800">
-            <div className="flex items-center gap-3">
-              <Heart className="w-8 h-8 text-red-400" />
-              <div>
-                <div className="text-2xl font-bold text-white">{favorites.length}</div>
-                <div className="text-gray-400 text-sm">Favorites</div>
-              </div>
-            </div>
+          <div className="bg-gray-900/70 rounded-xl p-6 border border-gray-800 flex flex-col items-center">
+            <Heart className="w-8 h-8 text-red-400 mb-2" />
+            <div className="text-2xl font-bold text-white">{favorites.length}</div>
+            <div className="text-gray-400 text-sm">Favorites</div>
           </div>
-          
-          <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800">
-            <div className="flex items-center gap-3">
-              <Clock className="w-8 h-8 text-blue-400" />
-              <div>
-                <div className="text-2xl font-bold text-white">{watchlist.length}</div>
-                <div className="text-gray-400 text-sm">Watchlist</div>
-              </div>
-            </div>
+          <div className="bg-gray-900/70 rounded-xl p-6 border border-gray-800 flex flex-col items-center">
+            <Clock className="w-8 h-8 text-blue-400 mb-2" />
+            <div className="text-2xl font-bold text-white">{watchlist.length}</div>
+            <div className="text-gray-400 text-sm">Watchlist</div>
           </div>
-          
-          <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800">
-            <div className="flex items-center gap-3">
-              <Play className="w-8 h-8 text-purple-400" />
-              <div>
-                <div className="text-2xl font-bold text-white">{recentlyWatched.length}</div>
-                <div className="text-gray-400 text-sm">Recently Watched</div>
-              </div>
-            </div>
+          <div className="bg-gray-900/70 rounded-xl p-6 border border-gray-800 flex flex-col items-center">
+            <Play className="w-8 h-8 text-purple-400 mb-2" />
+            <div className="text-2xl font-bold text-white">{recentlyWatched.length}</div>
+            <div className="text-gray-400 text-sm">Recently Watched</div>
           </div>
         </div>
 
-        {/* Currently Borrowed */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-              <BookOpen className="w-6 h-6 text-green-400" />
-              Currently Borrowed
-            </h2>
-            <Badge variant="secondary" className="bg-green-900/20 text-green-400 border-green-500/30">
-              {borrowedVideos.length} videos
-            </Badge>
-          </div>
-          <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800">
-            {getBorrowedVideos().length > 0 ? (
-              <VideoGrid
-                videos={getBorrowedVideos()}
-                favorites={favorites}
-                recentlyWatched={recentlyWatched}
-                onVideoSelect={handleVideoClick}
-                onToggleFavorite={toggleFavorite}
-              />
-            ) : (
-              <div className="text-center py-8">
-                <BookOpen className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400">No borrowed videos yet</p>
-                <Button 
-                  onClick={() => router.push('/')}
-                  className="mt-4 bg-red-600 hover:bg-red-700"
-                >
-                  Browse Library
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
+        {/* Video Sections */}
+        <div className="space-y-12">
+          {/* Currently Borrowed */}
+          <section>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <BookOpen className="w-6 h-6 text-green-400" />
+                Currently Borrowed
+              </h2>
+              <Badge variant="secondary" className="bg-green-900/20 text-green-400 border-green-500/30">
+                {borrowedVideos.length} videos
+              </Badge>
+            </div>
+            <div className="bg-gray-900/60 rounded-xl p-6 border border-gray-800">
+              {getBorrowedVideos().length > 0 ? (
+                <VideoGrid
+                  videos={getBorrowedVideos()}
+                  favorites={favorites}
+                  recentlyWatched={recentlyWatched}
+                  onVideoSelect={handleVideoClick}
+                  onToggleFavorite={toggleFavorite}
+                />
+              ) : (
+                <div className="text-center py-8">
+                  <BookOpen className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400">No borrowed videos yet</p>
+                  <Button 
+                    onClick={() => router.push('/')} className="mt-4 bg-red-600 hover:bg-red-700">
+                    Browse Library
+                  </Button>
+                </div>
+              )}
+            </div>
+          </section>
 
-        {/* Favorites */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-              <Heart className="w-6 h-6 text-red-400" />
-              Your Favorites
-            </h2>
-            <Badge variant="secondary" className="bg-red-900/20 text-red-400 border-red-500/30">
-              {favorites.length} videos
-            </Badge>
-          </div>
-          <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800">
-            {getFavoriteVideos().length > 0 ? (
-              <VideoGrid
-                videos={getFavoriteVideos()}
-                favorites={favorites}
-                recentlyWatched={recentlyWatched}
-                onVideoSelect={handleVideoClick}
-                onToggleFavorite={toggleFavorite}
-              />
-            ) : (
-              <div className="text-center py-8">
-                <Heart className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400">No favorite videos yet</p>
-                <Button 
-                  onClick={() => router.push('/')}
-                  className="mt-4 bg-red-600 hover:bg-red-700"
-                >
-                  Browse Library
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
+          {/* Favorites */}
+          <section>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <Heart className="w-6 h-6 text-red-400" />
+                Your Favorites
+              </h2>
+              <Badge variant="secondary" className="bg-red-900/20 text-red-400 border-red-500/30">
+                {favorites.length} videos
+              </Badge>
+            </div>
+            <div className="bg-gray-900/60 rounded-xl p-6 border border-gray-800">
+              {getFavoriteVideos().length > 0 ? (
+                <VideoGrid
+                  videos={getFavoriteVideos()}
+                  favorites={favorites}
+                  recentlyWatched={recentlyWatched}
+                  onVideoSelect={handleVideoClick}
+                  onToggleFavorite={toggleFavorite}
+                />
+              ) : (
+                <div className="text-center py-8">
+                  <Heart className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400">No favorite videos yet</p>
+                  <Button 
+                    onClick={() => router.push('/')} className="mt-4 bg-red-600 hover:bg-red-700">
+                    Browse Library
+                  </Button>
+                </div>
+              )}
+            </div>
+          </section>
 
-        {/* Watchlist */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-              <Clock className="w-6 h-6 text-blue-400" />
-              Your Watchlist
-            </h2>
-            <Badge variant="secondary" className="bg-blue-900/20 text-blue-400 border-blue-500/30">
-              {watchlist.length} videos
-            </Badge>
-          </div>
-          <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800">
-            {getWatchlistVideos().length > 0 ? (
-              <VideoGrid
-                videos={getWatchlistVideos()}
-                favorites={favorites}
-                recentlyWatched={recentlyWatched}
-                onVideoSelect={handleVideoClick}
-                onToggleFavorite={toggleFavorite}
-              />
-            ) : (
-              <div className="text-center py-8">
-                <Clock className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400">Your watchlist is empty</p>
-                <Button 
-                  onClick={() => router.push('/')}
-                  className="mt-4 bg-red-600 hover:bg-red-700"
-                >
-                  Browse Library
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
+          {/* Watchlist */}
+          <section>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <Clock className="w-6 h-6 text-blue-400" />
+                Your Watchlist
+              </h2>
+              <Badge variant="secondary" className="bg-blue-900/20 text-blue-400 border-blue-500/30">
+                {watchlist.length} videos
+              </Badge>
+            </div>
+            <div className="bg-gray-900/60 rounded-xl p-6 border border-gray-800">
+              {getWatchlistVideos().length > 0 ? (
+                <VideoGrid
+                  videos={getWatchlistVideos()}
+                  favorites={favorites}
+                  recentlyWatched={recentlyWatched}
+                  onVideoSelect={handleVideoClick}
+                  onToggleFavorite={toggleFavorite}
+                />
+              ) : (
+                <div className="text-center py-8">
+                  <Clock className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400">Your watchlist is empty</p>
+                  <Button 
+                    onClick={() => router.push('/')} className="mt-4 bg-red-600 hover:bg-red-700">
+                    Browse Library
+                  </Button>
+                </div>
+              )}
+            </div>
+          </section>
 
-        {/* Recently Watched */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-              <Play className="w-6 h-6 text-purple-400" />
-              Recently Watched
-            </h2>
-            <Badge variant="secondary" className="bg-purple-900/20 text-purple-400 border-purple-500/30">
-              {recentlyWatched.length} videos
-            </Badge>
-          </div>
-          <div className="bg-gray-900/50 backdrop-blur-sm rounded-xl p-6 border border-gray-800">
-            {getRecentlyWatchedVideos().length > 0 ? (
-              <VideoGrid
-                videos={getRecentlyWatchedVideos()}
-                favorites={favorites}
-                recentlyWatched={recentlyWatched}
-                onVideoSelect={handleVideoClick}
-                onToggleFavorite={toggleFavorite}
-              />
-            ) : (
-              <div className="text-center py-8">
-                <Play className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                <p className="text-gray-400">No recently watched videos</p>
-                <Button 
-                  onClick={() => router.push('/')}
-                  className="mt-4 bg-red-600 hover:bg-red-700"
-                >
-                  Browse Library
-                </Button>
-              </div>
-            )}
-          </div>
+          {/* Recently Watched */}
+          <section>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                <Play className="w-6 h-6 text-purple-400" />
+                Recently Watched
+              </h2>
+              <Badge variant="secondary" className="bg-purple-900/20 text-purple-400 border-purple-500/30">
+                {recentlyWatched.length} videos
+              </Badge>
+            </div>
+            <div className="bg-gray-900/60 rounded-xl p-6 border border-gray-800">
+              {getRecentlyWatchedVideos().length > 0 ? (
+                <VideoGrid
+                  videos={getRecentlyWatchedVideos()}
+                  favorites={favorites}
+                  recentlyWatched={recentlyWatched}
+                  onVideoSelect={handleVideoClick}
+                  onToggleFavorite={toggleFavorite}
+                />
+              ) : (
+                <div className="text-center py-8">
+                  <Play className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                  <p className="text-gray-400">No recently watched videos</p>
+                  <Button 
+                    onClick={() => router.push('/')} className="mt-4 bg-red-600 hover:bg-red-700">
+                    Browse Library
+                  </Button>
+                </div>
+              )}
+            </div>
+          </section>
         </div>
       </div>
     </div>
