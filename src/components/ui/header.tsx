@@ -172,6 +172,13 @@ export function Header({
                         <BookOpen className="w-4 h-4" />
                         <span>Dashboard</span>
                       </button>
+                      <button
+                        onClick={() => { setIsDropdownOpen(false); router.push("/admin/login"); }}
+                        className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-left text-foreground-secondary hover:text-foreground-primary hover:bg-white/5 transition-all duration-200"
+                      >
+                        <Settings className="w-4 h-4" />
+                        <span>Admin Panel</span>
+                      </button>
                       <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-left text-foreground-secondary hover:text-foreground-primary hover:bg-white/5 transition-all duration-200">
                         <Settings className="w-4 h-4" />
                         <span>Settings</span>
