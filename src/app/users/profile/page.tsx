@@ -1,42 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { 
-  User, 
-  Camera, 
-  Save, 
-  Key, 
-  Settings, 
-  Bell, 
-  Shield, 
-  Palette, 
-  Activity, 
-  Heart, 
-  Eye, 
-  Clock, 
-  Star, 
-  Edit3, 
-  X, 
-  Check,
-  Upload,
-  Download,
-  Trash2,
-  EyeOff,
-  Lock,
-  Unlock,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  Globe,
-  Github,
-  Twitter,
-  Linkedin,
-  Instagram,
-  ExternalLink,
-  Plus,
-  Minus
-} from "lucide-react";
+import { useState, useRef } from "react";
+import { User, Camera, Save, Key, Settings, Shield, Activity, Heart, Eye, Star, Edit3, X, EyeOff } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 interface UserStats {
@@ -209,7 +175,7 @@ export default function UserProfilePage() {
                 <div className="relative group">
                   <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold overflow-hidden border-4 border-background-elevated shadow-xl group-hover:shadow-2xl transition-all duration-300">
                     {avatarPreview ? (
-                      <img src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" />
+                      <Image src={avatarPreview} alt="Avatar" className="w-full h-full object-cover" fill />
                     ) : (
                       user.name ? user.name.split(' ').map(n => n[0]).join('').toUpperCase() : user.email[0]?.toUpperCase() || <User className="w-8 h-8" />
                     )}
@@ -265,7 +231,7 @@ export default function UserProfilePage() {
                   return (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id as any)}
+                      onClick={() => setActiveTab(tab.id as 'profile' | 'security' | 'preferences' | 'activity')}
                       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                         activeTab === tab.id
                           ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg"
@@ -514,7 +480,7 @@ export default function UserProfilePage() {
                       <label className="block text-sm font-medium text-foreground-secondary mb-2">Theme</label>
                       <select
                         value={preferences.theme}
-                        onChange={(e) => setPreferences(p => ({ ...p, theme: e.target.value as any }))}
+                        onChange={(e) => setPreferences(p => ({ ...p, theme: e.target.value as 'dark' | 'light' | 'auto' }))}
                         className="w-full px-4 py-3 rounded-xl bg-background-elevated/50 border border-white/10 text-foreground-primary focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
                       >
                         <option value="dark">Dark</option>
@@ -527,7 +493,7 @@ export default function UserProfilePage() {
                       <label className="block text-sm font-medium text-foreground-secondary mb-2">Privacy</label>
                       <select
                         value={preferences.privacy}
-                        onChange={(e) => setPreferences(p => ({ ...p, privacy: e.target.value as any }))}
+                        onChange={(e) => setPreferences(p => ({ ...p, privacy: e.target.value as 'public' | 'private' | 'friends' }))}
                         className="w-full px-4 py-3 rounded-xl bg-background-elevated/50 border border-white/10 text-foreground-primary focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
                       >
                         <option value="public">Public</option>
@@ -567,7 +533,7 @@ export default function UserProfilePage() {
                         <Heart className="w-5 h-5 text-white" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-foreground-primary">Added "The Shawshank Redemption" to favorites</p>
+                        <p className="text-sm font-medium text-foreground-primary">Added &quot;The Shawshank Redemption&quot; to favorites</p>
                         <p className="text-xs text-foreground-muted">2 hours ago</p>
                       </div>
                     </div>
@@ -577,7 +543,7 @@ export default function UserProfilePage() {
                         <Eye className="w-5 h-5 text-white" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-foreground-primary">Watched "Inception"</p>
+                        <p className="text-sm font-medium text-foreground-primary">Watched &quot;Inception&quot;</p>
                         <p className="text-xs text-foreground-muted">1 day ago</p>
                       </div>
                     </div>
@@ -587,7 +553,7 @@ export default function UserProfilePage() {
                         <Star className="w-5 h-5 text-white" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-foreground-primary">Rated "Pulp Fiction" 5 stars</p>
+                        <p className="text-sm font-medium text-foreground-primary">Rated &quot;Pulp Fiction&quot; 5 stars</p>
                         <p className="text-xs text-foreground-muted">3 days ago</p>
                       </div>
                     </div>

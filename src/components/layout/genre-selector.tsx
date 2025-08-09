@@ -12,7 +12,7 @@ const genres: {
   value: Genre; 
   label: string; 
   gradient: string; 
-  icon: any;
+  icon: React.ComponentType<{ className?: string }>;
   description: string;
 }[] = [
   { 

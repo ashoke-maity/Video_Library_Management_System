@@ -27,7 +27,7 @@ export default function LoginPage() {
         }))
       }
       router.push("/users/dashboard");
-    } catch (err: any) {
+    } catch (err: unknown) {
       setError("Login failed. Please check your credentials.");
     } finally {
       setLoading(false);

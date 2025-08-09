@@ -13,4 +13,6 @@ export interface Video {
   dateAdded: string
   coverColor: string
   thumbnailUrl?: string
+  backdropUrl?: string // For hero/banner images
+  posterUrl?: string   // For poster images
 }

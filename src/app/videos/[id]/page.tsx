@@ -6,6 +6,7 @@ import { ArrowLeft, Play, Heart, Download, Share2, Calendar, Clock, Star, Eye, P
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { mockVideos } from "@/lib/mock-videos"
+import { fetchMovieById } from "@/lib/tmdb-api"
 import type { Video } from "@/lib/video"
 
 export default function VideoDetailsPage() {
@@ -15,13 +16,50 @@ export default function VideoDetailsPage() {
   const [isFavorite, setIsFavorite] = useState(false)
   const [isBorrowed, setIsBorrowed] = useState(false)
   const [isInWatchlist, setIsInWatchlist] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    const foundVideo = mockVideos.find(v => v.id === params.id)
-    if (foundVideo) {
-      setVideo(foundVideo)
+    const loadVideo = async () => {
+      setIsLoading(true)
+      
+      try {
+        // First try to get from API if we have an API key
+        if (process.env.NEXT_PUBLIC_TMDB_API_KEY) {
+          const apiVideo = await fetchMovieById(params.id as string)
+          if (apiVideo) {
+            setVideo(apiVideo)
+            setIsLoading(false)
+            return
+          }
+        }
+        
+        // Fallback to mock data
+        const foundVideo = mockVideos.find(v => v.id === params.id)
+        if (foundVideo) {
+          setVideo(foundVideo)
+        }
+      } catch (error) {
+        console.error('Error loading video:', error)
+        // Fallback to mock data on error
+        const foundVideo = mockVideos.find(v => v.id === params.id)
+        if (foundVideo) {
+          setVideo(foundVideo)
+        }
+      }
+      
+      setIsLoading(false)
     }
+
+    loadVideo()
   }, [params.id])
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-white text-xl">Loading video...</div>
+      </div>
+    )
+  }
 
   if (!video) {
     return (
