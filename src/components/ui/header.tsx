@@ -140,23 +140,6 @@ export function Header({
                     id="header-avatar-dropdown"
                     className="absolute right-0 mt-3 w-64 bg-background-elevated/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden animate-fade-in"
                   >
-                    <div className="p-4 border-b border-white/10">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center text-white font-bold">
-                          {user.name
-                            ? user.name
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")
-                                .toUpperCase()
-                            : user.email?.[0].toUpperCase()}
-                        </div>
-                        <div>
-                          <p className="font-semibold text-foreground-primary">{user.name || "User"}</p>
-                          <p className="text-sm text-foreground-tertiary">{user.email}</p>
-                        </div>
-                      </div>
-                    </div>
                     <div className="p-2">
                       <button
                         onClick={() => { setIsDropdownOpen(false); router.push("/users/profile"); }}
@@ -166,22 +149,11 @@ export function Header({
                         <span>Profile</span>
                       </button>
                       <button
-                        onClick={() => { setIsDropdownOpen(false); router.push("/dashboard"); }}
+                        onClick={() => { setIsDropdownOpen(false); router.push("/users/dashboard"); }}
                         className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-left text-foreground-secondary hover:text-foreground-primary hover:bg-white/5 transition-all duration-200"
                       >
                         <BookOpen className="w-4 h-4" />
                         <span>Dashboard</span>
-                      </button>
-                      <button
-                        onClick={() => { setIsDropdownOpen(false); router.push("/admin/login"); }}
-                        className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-left text-foreground-secondary hover:text-foreground-primary hover:bg-white/5 transition-all duration-200"
-                      >
-                        <Settings className="w-4 h-4" />
-                        <span>Admin Panel</span>
-                      </button>
-                      <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-left text-foreground-secondary hover:text-foreground-primary hover:bg-white/5 transition-all duration-200">
-                        <Settings className="w-4 h-4" />
-                        <span>Settings</span>
                       </button>
                       <div className="border-t border-white/10 my-2"></div>
                       <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-left text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-200">
