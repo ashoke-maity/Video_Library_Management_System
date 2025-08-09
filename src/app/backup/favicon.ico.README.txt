@@ -1,0 +1,1 @@
+This file is a backup of the original favicon.ico that was in src/app/ before resolving the Next.js conflict. If you need to restore it, move it back to its original location.

@@ -16,7 +16,6 @@ interface UserStats {
 interface UserPreferences {
   theme: 'dark' | 'light' | 'auto';
   notifications: boolean;
-  privacy: 'public' | 'private' | 'friends';
   language: string;
 }
 
@@ -28,9 +27,6 @@ export default function UserProfilePage() {
     name: string; 
     email: string; 
     avatar?: string;
-    bio?: string;
-    location?: string;
-    website?: string;
     social?: {
       twitter?: string;
       github?: string;
@@ -39,25 +35,10 @@ export default function UserProfilePage() {
     };
   }>(() => {
     const userData = localStorage.getItem("user");
-    return userData ? { 
-      ...JSON.parse(userData), 
-      avatar: undefined,
-      bio: "Passionate movie enthusiast and collector of cinematic masterpieces.",
-      location: "San Francisco, CA",
-      website: "https://example.com",
-      social: {
-        twitter: "@movielover",
-        github: "github.com/movielover",
-        linkedin: "linkedin.com/in/movielover",
-        instagram: "@cinematiclife"
-      }
-    } : { 
+    return userData ? { ...JSON.parse(userData), avatar: undefined } : { 
       name: "", 
       email: "", 
       avatar: undefined,
-      bio: "",
-      location: "",
-      website: "",
       social: {}
     };
   });
@@ -65,9 +46,6 @@ export default function UserProfilePage() {
   const [editing, setEditing] = useState(false);
   const [newName, setNewName] = useState(user.name);
   const [newEmail, setNewEmail] = useState(user.email);
-  const [newBio, setNewBio] = useState(user.bio || "");
-  const [newLocation, setNewLocation] = useState(user.location || "");
-  const [newWebsite, setNewWebsite] = useState(user.website || "");
   const [avatarPreview, setAvatarPreview] = useState<string | undefined>(user.avatar);
   const [passwords, setPasswords] = useState({ current: "", new: "", confirm: "" });
   const [passwordMsg, setPasswordMsg] = useState("");
@@ -75,16 +53,14 @@ export default function UserProfilePage() {
   const [activeTab, setActiveTab] = useState<'profile' | 'security' | 'preferences' | 'activity'>('profile');
   const [preferences, setPreferences] = useState<UserPreferences>({
     theme: 'dark',
-    notifications: true,
-    privacy: 'public',
     language: 'en'
   });
   const [stats] = useState<UserStats>({
-    totalVideos: 247,
-    favorites: 89,
-    watchTime: "1,234 hours",
-    lastActive: "2 hours ago",
-    joinDate: "March 2023"
+    totalVideos: 0,
+    favorites: 0,
+    watchTime: "0",
+    lastActive: "0",
+    joinDate: "March 2025"
   });
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -108,16 +84,10 @@ export default function UserProfilePage() {
       name: newName, 
       email: newEmail, 
       avatar: avatarPreview,
-      bio: newBio,
-      location: newLocation,
-      website: newWebsite
     }));
     localStorage.setItem("user", JSON.stringify({ 
       name: newName, 
       email: newEmail,
-      bio: newBio,
-      location: newLocation,
-      website: newWebsite
     }));
     setEditing(false);
   };
@@ -141,7 +111,6 @@ export default function UserProfilePage() {
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'security', label: 'Security', icon: Shield },
     { id: 'preferences', label: 'Preferences', icon: Settings },
-    { id: 'activity', label: 'Activity', icon: Activity },
   ];
 
   return (
@@ -231,7 +200,7 @@ export default function UserProfilePage() {
                   return (
                     <button
                       key={tab.id}
-                      onClick={() => setActiveTab(tab.id as 'profile' | 'security' | 'preferences' | 'activity')}
+                      onClick={() => setActiveTab(tab.id as 'profile' | 'security' | 'preferences')}
                       className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200 ${
                         activeTab === tab.id
                           ? "bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg"
@@ -289,40 +258,6 @@ export default function UserProfilePage() {
                         </div>
                       </div>
                       
-                      <div>
-                        <label className="block text-sm font-medium text-foreground-secondary mb-2">Bio</label>
-                        <textarea
-                          value={newBio}
-                          onChange={e => setNewBio(e.target.value)}
-                          rows={3}
-                          className="w-full px-4 py-3 rounded-xl bg-background-elevated/50 border border-white/10 text-foreground-primary placeholder-foreground-muted focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200 resize-none"
-                          placeholder="Tell us about yourself..."
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                          <label className="block text-sm font-medium text-foreground-secondary mb-2">Location</label>
-                          <input
-                            type="text"
-                            value={newLocation}
-                            onChange={e => setNewLocation(e.target.value)}
-                            className="w-full px-4 py-3 rounded-xl bg-background-elevated/50 border border-white/10 text-foreground-primary placeholder-foreground-muted focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
-                            placeholder="Enter your location"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-foreground-secondary mb-2">Website</label>
-                          <input
-                            type="url"
-                            value={newWebsite}
-                            onChange={e => setNewWebsite(e.target.value)}
-                            className="w-full px-4 py-3 rounded-xl bg-background-elevated/50 border border-white/10 text-foreground-primary placeholder-foreground-muted focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
-                            placeholder="https://example.com"
-                          />
-                        </div>
-                      </div>
-
                       <div className="flex gap-4">
                         <button
                           onClick={handleSaveProfile}
@@ -352,28 +287,6 @@ export default function UserProfilePage() {
                           <label className="block text-sm font-medium text-foreground-secondary mb-2">Email</label>
                           <div className="px-4 py-3 rounded-xl bg-background-elevated/30 text-foreground-primary">
                             {user.email}
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div>
-                        <label className="block text-sm font-medium text-foreground-secondary mb-2">Bio</label>
-                        <div className="px-4 py-3 rounded-xl bg-background-elevated/30 text-foreground-primary">
-                          {user.bio || "No bio added yet."}
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                          <label className="block text-sm font-medium text-foreground-secondary mb-2">Location</label>
-                          <div className="px-4 py-3 rounded-xl bg-background-elevated/30 text-foreground-primary">
-                            {user.location || "Not specified"}
-                          </div>
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-foreground-secondary mb-2">Website</label>
-                          <div className="px-4 py-3 rounded-xl bg-background-elevated/30 text-foreground-primary">
-                            {user.website || "Not specified"}
                           </div>
                         </div>
                       </div>
@@ -487,75 +400,6 @@ export default function UserProfilePage() {
                         <option value="light">Light</option>
                         <option value="auto">Auto</option>
                       </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-foreground-secondary mb-2">Privacy</label>
-                      <select
-                        value={preferences.privacy}
-                        onChange={(e) => setPreferences(p => ({ ...p, privacy: e.target.value as 'public' | 'private' | 'friends' }))}
-                        className="w-full px-4 py-3 rounded-xl bg-background-elevated/50 border border-white/10 text-foreground-primary focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all duration-200"
-                      >
-                        <option value="public">Public</option>
-                        <option value="private">Private</option>
-                        <option value="friends">Friends Only</option>
-                      </select>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <label className="text-sm font-medium text-foreground-secondary">Notifications</label>
-                        <p className="text-xs text-foreground-muted">Receive email notifications</p>
-                      </div>
-                      <button
-                        onClick={() => setPreferences(p => ({ ...p, notifications: !p.notifications }))}
-                        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
-                          preferences.notifications ? 'bg-indigo-500' : 'bg-background-elevated'
-                        }`}
-                      >
-                        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
-                          preferences.notifications ? 'translate-x-6' : 'translate-x-1'
-                        }`} />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Activity Tab */}
-              {activeTab === 'activity' && (
-                <div className="space-y-8">
-                  <h2 className="text-2xl font-bold text-foreground-primary">Recent Activity</h2>
-                  
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4 p-4 bg-background-elevated/30 rounded-xl border border-white/10">
-                      <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
-                        <Heart className="w-5 h-5 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-foreground-primary">Added &quot;The Shawshank Redemption&quot; to favorites</p>
-                        <p className="text-xs text-foreground-muted">2 hours ago</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 p-4 bg-background-elevated/30 rounded-xl border border-white/10">
-                      <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
-                        <Eye className="w-5 h-5 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-foreground-primary">Watched &quot;Inception&quot;</p>
-                        <p className="text-xs text-foreground-muted">1 day ago</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-4 p-4 bg-background-elevated/30 rounded-xl border border-white/10">
-                      <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl flex items-center justify-center">
-                        <Star className="w-5 h-5 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-foreground-primary">Rated &quot;Pulp Fiction&quot; 5 stars</p>
-                        <p className="text-xs text-foreground-muted">3 days ago</p>
-                      </div>
                     </div>
                   </div>
                 </div>
