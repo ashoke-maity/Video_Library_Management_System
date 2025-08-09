@@ -142,11 +142,11 @@ export function Header({
                   >
                     <div className="p-2">
                       <button
-                        onClick={() => { setIsDropdownOpen(false); router.push("/users/profile"); }}
+                        onClick={() => { setIsDropdownOpen(false); router.push("/users/settings"); }}
                         className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-left text-foreground-secondary hover:text-foreground-primary hover:bg-white/5 transition-all duration-200"
                       >
                         <User className="w-4 h-4" />
-                        <span>Profile</span>
+                        <span>Settings</span>
                       </button>
                       <button
                         onClick={() => { setIsDropdownOpen(false); router.push("/users/dashboard"); }}
