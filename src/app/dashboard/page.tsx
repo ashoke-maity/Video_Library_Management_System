@@ -22,7 +22,7 @@ export default function DashboardPage() {
   }, []);
 
   // Handlers
-  const handleVideoClick = (video: any) => {
+  const handleVideoClick = (video: { id: string }) => {
     router.push(`/videos/${video.id}`);
   };
   const toggleFavorite = (videoId: string) => {
